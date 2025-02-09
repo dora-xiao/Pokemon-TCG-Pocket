@@ -4,12 +4,48 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.0/dist/bootstrap-table.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d08efb2ad0.js" crossorigin="anonymous"></script>
     <style>
-        img {
-            height: 1em;
+        th, td {
+            vertical-align: middle;
         }
-        #count2 {
-            /* display: none; */
+        img {
+            height: 2em;
+        }
+        .count2 {
+            display: none;
+        }
+        .count1text {
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+
+        thead {
+            background-color: rgb(231, 231, 231);
+            position: sticky;
+            top: -1;
+        }
+
+        .hide {
+            display: none;
+        }
+        #lock:hover {
+            padding: 1em;
+            display: none;
+        }
+        #lock:hover + .hide {
+            display: inherit;
+            color: red;
+        }
+        #unlock {
+            display: none;
+        }
+        tbody>tr:hover {
+            background-color: rgb(247, 247, 247);
         }
     </style>
 </head>
@@ -18,7 +54,7 @@
 
 
     <!-- Table -->
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Image</th>
@@ -27,8 +63,12 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Rarity</th>
-                <th id="count1">My Count</th>
-                <th id="count2">Count 2</th>
+                <th id="count1">My Count &nbsp;
+                    <!-- TODO: locking mechanism to protect against accidental edits -->
+                    <!-- <button type="button" id="lock"><i class="fa-solid fa-lock" onclick="lockCounts()"></i></button>
+                    <button type="button" id="unlock" class="hide"><i class="fa-solid fa-unlock" onclick="unlockCounts()"></i></button> -->
+                </th>
+                <th id="count2" class="count2">Count 2</th>
             </tr>
         </thead>
         <tbody id="cards"></tbody>
@@ -91,9 +131,9 @@
         }
 
         // Using global variable cards, populate table UI 
-        async function populateTable(cards) {
+        async function populateTable(cards, username) {
             let table = document.getElementById("cards");
-            console.log(cards);
+            var user = await loadUser(username);
             for (let group in cards) {
                 for(let id in cards[group]) {
                     let newRow = document.createElement("tr");
@@ -107,17 +147,34 @@
                     <td>${id}</td>
                     <td>${cards[group][id]["name"]}</td>
                     <td>${cards[group][id]["rarity"]["type"] == "promo" ? "Promo": rarity_types[cards[group][id]["rarity"]["type"]].repeat(cards[group][id]["rarity"]["count"])}</td>
-                    <td id="${group+":"+id}count1" class="count1">0</td>
+                    <td class="count1">
+                        <button type="button" class="btn btn-light"><i class="fa-solid fa-minus"></i></button>
+                        <span id="${group+":"+id}count1" class="count1text">${user[group+":"+id]}</span>
+                        <button type="button" class="btn btn-light"><i class="fa-solid fa-plus"></i></button>
+                    </td>
                     <td id="${group+":"+id}count2" class="count2">0</td>`;
                     table.appendChild(newRow);
                 }
             }
+
+
+        }
+
+
+        function lockCounts() {
+
+        }
+
+        function unlockCounts() {
+
         }
         
 
         // Runtime Code
         var cards = await loadCards();
-        populateTable(cards);
+        populateTable(cards, "dora");
+
+        // TODO: implement plus/minus, locking, sorting, searching, loading second user, trade matching, view larger card modal
     </script>
 </body>
 </html>
