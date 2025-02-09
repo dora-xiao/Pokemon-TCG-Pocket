@@ -4,10 +4,27 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
 </head>
 <body>
-    
+    <!-- Search -->
+
+
+    <!-- Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Group</th>
+                <th>Pack</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Count</th>
+                <th>Rarity</th>
+            </tr>
+        </thead>
+        <tbody id="cards"></tbody>
+    </table>
+
     <script type="module">
         const firebaseConfig = {
           apiKey: "AIzaSyBr_yU5UO5ig9_3AOw3307Ge9HvCkI0vek",
@@ -51,11 +68,27 @@
         // Example usage:
         // updateUser("dora", {"A1-001": 5});
 
+        // Read default card data from Firebase
+        async function loadCards() {
+            var cards = {}
+            await Promise.all(["A1", "A1a", "A2", "P-A"].map(async (group) => {
+                var docRef = db.collection("cards").doc(group);
+                let snapshot = await docRef.get();
+                cards[group] = snapshot.data();
+            }));
 
+            return cards;
+        }
+
+        // Using global variable cards, populate table UI 
+        async function populateTable(cards) {
+            console.log(cards);
+            let table = document.getElementById("cards");
+            
+        }
         
-    </script>
-    <script>
-        
+        var cards = await loadCards();
+        populateTable(cards);
     </script>
 </body>
 </html>
