@@ -5,9 +5,9 @@ lines = cardfile.readlines()
 
 result = {}
 
-for line in lines:
+for line in lines[1:]:
     vals = line.replace("\n", "").split(",")
-    result[f"{vals[0]}:{vals[1]}"] = vals[2];
+    result[f"{vals[0]}:{vals[1]}"] = int(vals[2]);
 
 with open('data/inventory.json', 'w') as f:
     json.dump(result, f)
