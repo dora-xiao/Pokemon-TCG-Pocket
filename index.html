@@ -4,6 +4,14 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        img {
+            height: 1em;
+        }
+        #count2 {
+            /* display: none; */
+        }
+    </style>
 </head>
 <body>
     <!-- Search -->
@@ -18,14 +26,16 @@
                 <th>Pack</th>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Count</th>
                 <th>Rarity</th>
+                <th id="count1">My Count</th>
+                <th id="count2">Count 2</th>
             </tr>
         </thead>
         <tbody id="cards"></tbody>
     </table>
 
     <script type="module">
+        const rarity_types = {"diamond": "◇", "star": "☆", "crown": "♛"}
         const firebaseConfig = {
           apiKey: "AIzaSyBr_yU5UO5ig9_3AOw3307Ge9HvCkI0vek",
           authDomain: "tcgutil.firebaseapp.com",
@@ -82,11 +92,30 @@
 
         // Using global variable cards, populate table UI 
         async function populateTable(cards) {
-            console.log(cards);
             let table = document.getElementById("cards");
-            
+            console.log(cards);
+            for (let group in cards) {
+                for(let id in cards[group]) {
+                    let newRow = document.createElement("tr");
+                    newRow.id = group+":"+id;
+                    newRow.setAttribute("group", group);
+                    newRow.setAttribute("card", id);
+                    newRow.innerHTML = 
+                    `<td><img src='${cards[group][id]["img"]}'></td>
+                    <td>${group}</td>
+                    <td>${cards[group][id]["pack"]}</td>
+                    <td>${id}</td>
+                    <td>${cards[group][id]["name"]}</td>
+                    <td>${cards[group][id]["rarity"]["type"] == "promo" ? "Promo": rarity_types[cards[group][id]["rarity"]["type"]].repeat(cards[group][id]["rarity"]["count"])}</td>
+                    <td id="${group+":"+id}count1" class="count1">0</td>
+                    <td id="${group+":"+id}count2" class="count2">0</td>`;
+                    table.appendChild(newRow);
+                }
+            }
         }
         
+
+        // Runtime Code
         var cards = await loadCards();
         populateTable(cards);
     </script>
