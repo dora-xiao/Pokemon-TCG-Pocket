@@ -1,0 +1,54 @@
+<html>
+<head>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+</head>
+<body>
+    
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "AIzaSyBr_yU5UO5ig9_3AOw3307Ge9HvCkI0vek",
+          authDomain: "tcgutil.firebaseapp.com",
+          projectId: "tcgutil",
+          storageBucket: "tcgutil.firebasestorage.app",
+          messagingSenderId: "455965704720",
+          appId: "1:455965704720:web:ae33d8c61b5504f4ed8095",
+          measurementId: "G-5166VM34SR"
+        };
+      
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Load one user's data
+        async function loadUser(username) {
+            var docRef = db.collection("users").doc(username);
+            var snapshot = await docRef.get();
+            return snapshot.data();
+        }
+
+        // Add a new user document
+        async function addUser(username, data) {
+            var result = await db.collection("users").doc(username).set(data.parse());
+            return result;
+        }
+
+        // Update cards for a user
+        async function updateUser(username, cardsChanged) {
+            var ref = db.collection("users").doc(username);
+            var result = await ref.update(cardsChanged.parse());
+            return result;
+        }
+
+        // var user = await loadUser("dora");
+        // console.log(user);
+
+    </script>
+    <script>
+        
+    </script>
+</body>
+</html>
